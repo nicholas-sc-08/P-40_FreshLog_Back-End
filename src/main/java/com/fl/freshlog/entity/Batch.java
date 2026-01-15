@@ -23,8 +23,8 @@ public class Batch {
     private Integer batchId;
     
     @ManyToOne
-    @JoinColumn(name = "fruit_id", unique = true)
-    private Integer fruitId;
+    @JoinColumn(name = "product_id", unique = true)
+    private Integer productId;
 
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
