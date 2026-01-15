@@ -5,12 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.fl.freshlog.dto.BatchDTO;
-import com.fl.freshlog.dto.ProductDTO;
 import com.fl.freshlog.entity.Batch;
-import com.fl.freshlog.entity.Category;
 import com.fl.freshlog.entity.Product;
 import com.fl.freshlog.repository.BatchRepo;
-import com.fl.freshlog.repository.CategoryRepo;
 import com.fl.freshlog.repository.ProductRepo;
 
 import lombok.RequiredArgsConstructor;
@@ -38,5 +35,9 @@ public class BathService {
         batch.setQuantity(dto.quantity());
 
         return batchRepo.save(batch);
+    }
+
+    public void deleteBatch(Integer id) {
+        batchRepo.deleteById(id);
     }
 }
