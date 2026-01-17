@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class BathService {
-    
+
     private final ProductRepo productRepo;
     private final BatchRepo batchRepo;
 

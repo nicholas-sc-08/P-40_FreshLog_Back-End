@@ -32,7 +32,7 @@ public class Product {
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private Integer categoryId;
+    private Category category;
 
     @Column(name = "price", nullable = false, scale = 2)
     private BigDecimal price;
