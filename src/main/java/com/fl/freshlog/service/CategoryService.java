@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.fl.freshlog.dto.CategoryDTO;
 import com.fl.freshlog.entity.Category;
 import com.fl.freshlog.repository.CategoryRepo;
 
@@ -19,7 +20,7 @@ public class CategoryService {
         return categoryRepo.findAll();
     }
 
-    public Category getCategoryByName(String name) {
+    public CategoryDTO getCategoryByName(String name) {
         return categoryRepo.findByName(name);
     }
 
