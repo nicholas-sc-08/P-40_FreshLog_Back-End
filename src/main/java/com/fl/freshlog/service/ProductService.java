@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.fl.freshlog.dto.CategoryDTO;
 import com.fl.freshlog.dto.ProductDTO;
 import com.fl.freshlog.entity.Category;
 import com.fl.freshlog.entity.Product;
@@ -21,7 +22,7 @@ public class ProductService {
 
     public ProductDTO getProductByName(String name) {
         Product product = productRepo.findByName(name).orElseThrow(() -> new RuntimeException("Product with name "+name+" don't exist"));
-        Optional<Category> category = categoryRepo.findById(product.getCategoryId());
+        Optional<Category> category = categoryRepo.findById(product.getCategory().getCategoryId());
 
         ProductDTO productData = new ProductDTO(
             product.getProductId(),
@@ -36,12 +37,16 @@ public class ProductService {
     }
 
     public ProductDTO saveProduct(ProductDTO product) {
-        Category category = categoryRepo.findByName(product.categoryName());
+        CategoryDTO category = categoryRepo.findByName(product.categoryName());
 
         Product productData = new Product();
+        Category categoryEntity = new Category();
+
+        categoryEntity.setCategoryId(category.categoryId());
+        categoryEntity.setName(category.name());
 
         productData.setName(product.name());
-        productData.setCategoryId(category.getCategoryId());
+        productData.setCategory(categoryEntity);
         productData.setPrice(product.price());
         productData.setMinStock(product.minStock());
         productData.setCreatedAt(product.createdAt());
