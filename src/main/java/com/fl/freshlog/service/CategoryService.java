@@ -1,8 +1,10 @@
 package com.fl.freshlog.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 
 import com.fl.freshlog.dto.CategoryDTO;
 import com.fl.freshlog.entity.Category;
@@ -18,8 +20,10 @@ public class CategoryService {
     
     private final CategoryRepo categoryRepo;
 
-    public List<Category> getAllCategories() {
-        return categoryRepo.findAll();
+    public List<CategoryDTO> getAllCategories() {
+        List<Category> categories = categoryRepo.findAll();
+        
+       return categories.stream().map(category -> new CategoryDTO(category.getCategoryId(), category.getName())).toList();
     }
 
     public CategoryDTO getCategoryByName(String name) {
