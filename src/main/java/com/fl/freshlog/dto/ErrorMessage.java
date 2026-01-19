@@ -1,5 +1,3 @@
 package com.fl.freshlog.dto;
 
-public record ErrorMessage(String message) {
-    
-}
+public record ErrorMessage(String message) {}
