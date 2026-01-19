@@ -8,6 +8,8 @@ import com.fl.freshlog.dto.CategoryDTO;
 import com.fl.freshlog.dto.ProductDTO;
 import com.fl.freshlog.entity.Category;
 import com.fl.freshlog.entity.Product;
+import com.fl.freshlog.exception.CategoryNotFoundException;
+import com.fl.freshlog.exception.ProductNotFoundException;
 import com.fl.freshlog.repository.CategoryRepo;
 import com.fl.freshlog.repository.ProductRepo;
 
@@ -21,13 +23,13 @@ public class ProductService {
     private final CategoryRepo categoryRepo;
 
     public ProductDTO getProductByName(String name) {
-        Product product = productRepo.findByName(name).orElseThrow(() -> new RuntimeException("Product with name "+name+" don't exist"));
-        Optional<Category> category = categoryRepo.findById(product.getCategory().getCategoryId());
+        Product product = productRepo.findByName(name).orElseThrow(() -> new ProductNotFoundException("Product with name "+name+" don't exist"));
+        Category category = categoryRepo.findById(product.getCategory().getCategoryId()).orElseThrow(() -> new CategoryNotFoundException("Category with name "+name+" not found"));
 
         ProductDTO productData = new ProductDTO(
             product.getProductId(),
             product.getName(),
-            category.get().getName(),
+            category.getName(),
             product.getPrice(),
             product.getMinStock(),
             product.getCreatedAt()

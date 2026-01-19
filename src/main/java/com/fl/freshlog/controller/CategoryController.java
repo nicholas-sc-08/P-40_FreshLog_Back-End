@@ -24,6 +24,7 @@ public class CategoryController {
     
     private final CategoryService categoryService;
 
+    @Operation(summary = "Get all the categories from the database")
     @GetMapping("/category")
     public ResponseEntity<?> getAllCategoryies() {
         List<CategoryDTO> categories = categoryService.getAllCategories();

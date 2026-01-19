@@ -14,7 +14,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(CategoryNotFoundException.class)
-    public ResponseEntity<ErrorMessage> handleCategoryNotFOund(CategoryNotFoundException ex) {
+    public ResponseEntity<ErrorMessage> handleCategoryNotFound(CategoryNotFoundException ex) {
+        return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleProductNotFound(ProductNotFoundException ex) {
+        return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));
+    }
+
+    @ExceptionHandler(BatchNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleBatchNotFound(BatchNotFoundException ex) {
         return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));
     }
 }
