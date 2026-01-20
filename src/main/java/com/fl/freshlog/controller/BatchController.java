@@ -10,8 +10,9 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Batch Endpoint", description = "CRUD table of 'tb_batch' where you can find by ID, create or update or delete")
 public class BatchController {
     
     private final BatchService batchService;
-
+    
 }
