@@ -24,7 +24,7 @@ public class CategoryController {
     
     private final CategoryService categoryService;
 
-    @Operation(summary = "Get all the categories from the database")
+    @Operation(summary = "Get all the categories from the database.")
     @GetMapping("/category")
     public ResponseEntity<?> getAllCategoryies() {
         List<CategoryDTO> categories = categoryService.getAllCategories();
@@ -45,6 +45,7 @@ public class CategoryController {
         return ResponseEntity.status(201).body(category);
     }
 
+    @Operation(method = "DELETE", summary = "Choise which category you want to delete by it's ID.")
     @DeleteMapping("/category/{categoryId}")
     public ResponseEntity<?> deleteCategory(@PathVariable Integer categoryId) {
         categoryService.deleteCategory(categoryId);

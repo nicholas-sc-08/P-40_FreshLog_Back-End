@@ -30,11 +30,9 @@ public class CategoryService {
         CategoryDTO existsCategory = categoryRepo.findByName(name);
 
         if(existsCategory != null) {
-
             return existsCategory;
-        } else {
-            throw new CategoryNotFoundException("Category "+name+" don't exists!");
         }
+        throw new CategoryNotFoundException("Category "+name+" don't exists!");
     }
 
     public CategoryDTO saveCategory(CategoryDTO dto) {
@@ -48,9 +46,8 @@ public class CategoryService {
             
             Category savedEntity = categoryRepo.save(entity);
             return new CategoryDTO(savedEntity.getCategoryId(), savedEntity.getName());
-        } else {
-            throw new CategoryAlreadyExistsException("Category already exists!");
         }
+        throw new CategoryAlreadyExistsException("Category already exists!");
     }
 
     public void deleteCategory(Integer id) {
