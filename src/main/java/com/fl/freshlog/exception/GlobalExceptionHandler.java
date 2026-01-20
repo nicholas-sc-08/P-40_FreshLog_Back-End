@@ -28,6 +28,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));
     }
 
+    @ExceptionHandler(BatchAlreadyExistsException.class)
+    public ResponseEntity<ErrorMessage> handleBatchExists(BatchAlreadyExistsException ex) {
+        return ResponseEntity.status(409).body(new ErrorMessage(ex.getMessage()));
+    }
+
     @ExceptionHandler(BatchNotFoundException.class)
     public ResponseEntity<ErrorMessage> handleBatchNotFound(BatchNotFoundException ex) {
         return ResponseEntity.status(404).body(new ErrorMessage(ex.getMessage()));

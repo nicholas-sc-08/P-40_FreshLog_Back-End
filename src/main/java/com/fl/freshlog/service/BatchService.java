@@ -1,12 +1,14 @@
 package com.fl.freshlog.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.fl.freshlog.dto.BatchDTO;
 import com.fl.freshlog.entity.Batch;
 import com.fl.freshlog.entity.Product;
+import com.fl.freshlog.exception.BatchAlreadyExistsException;
 import com.fl.freshlog.exception.BatchNotFoundException;
 import com.fl.freshlog.exception.ProductNotFoundException;
 import com.fl.freshlog.repository.BatchRepo;
@@ -34,8 +36,12 @@ public class BatchService {
 
     public BatchDTO saveBatch(BatchDTO dto) {
         Product product = productRepo.findByName(dto.productName()).orElseThrow(() -> new ProductNotFoundException("Product not found with name: "+dto.productName()+"."));
+        Optional<BatchDTO> batchExists = batchRepo.findByProductName(dto.productName());
+        if(batchExists.isPresent()) {
+            throw new BatchAlreadyExistsException("Batch of "+dto.productName()+" already exists");
+        }
+        
         Batch batch = new Batch();
-
         batch.setProduct(product);  
         batch.setQuantity(dto.quantity());
 

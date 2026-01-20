@@ -9,6 +9,7 @@ import com.fl.freshlog.dto.CategoryDTO;
 import com.fl.freshlog.dto.ProductDTO;
 import com.fl.freshlog.entity.Category;
 import com.fl.freshlog.entity.Product;
+import com.fl.freshlog.exception.CategoryNotFoundException;
 import com.fl.freshlog.exception.ProductAlreadyExistsException;
 import com.fl.freshlog.exception.ProductNotFoundException;
 import com.fl.freshlog.repository.CategoryRepo;
@@ -51,19 +52,24 @@ public class ProductService {
     }
 
     public ProductDTO saveProduct(ProductDTO dto) {
-        CategoryDTO category = categoryRepo.findByName(dto.categoryName());
-        Category categoryEntity = new Category();
-        
-        categoryEntity.setCategoryId(category.categoryId());
-        categoryEntity.setName(category.name());
-
-        Optional<Product> productExists = productRepo.findByName(dto.name());
-        if(productExists.isPresent()) {
-            throw new ProductAlreadyExistsException("Product with name "+dto.name()+" already exists");
+        CategoryDTO category = categoryRepo.findByName(dto.categoryName()).orElse(null);
+        if(category == null) {
+            throw new CategoryNotFoundException("Category with name "+dto.categoryName()+" don't exists.");
         }
 
-        Product productData = new Product();
+        Category categoryEntity = new Category();
+        categoryEntity.setCategoryId(category.categoryId());
+        categoryEntity.setName(category.name());
         
+        Product productData = new Product();
+        if(dto.productId() != null && productRepo.existsById(dto.productId())) {
+            productData.setProductId(dto.productId());
+        } else {
+            if(productRepo.findByName(dto.name()).isPresent()) {
+                throw new ProductAlreadyExistsException("Product with name "+dto.name()+" already exists");
+            }
+        }
+
         productData.setName(dto.name());
         productData.setCategory(categoryEntity);
         productData.setPrice(dto.price());
