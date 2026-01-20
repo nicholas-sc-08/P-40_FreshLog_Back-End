@@ -57,9 +57,13 @@ public class ProductService {
         categoryEntity.setCategoryId(category.categoryId());
         categoryEntity.setName(category.name());
 
-        Product productData = new Product();
-        productRepo.findByName(dto.name()).orElseThrow(() -> new ProductAlreadyExistsException("Product with name "+dto.name()+"already exists!"));
+        Optional<Product> productExists = productRepo.findByName(dto.name());
+        if(productExists.isPresent()) {
+            throw new ProductAlreadyExistsException("Product with name "+dto.name()+" already exists");
+        }
 
+        Product productData = new Product();
+        
         productData.setName(dto.name());
         productData.setCategory(categoryEntity);
         productData.setPrice(dto.price());
@@ -79,6 +83,9 @@ public class ProductService {
     }
 
     public void deleteProductById(Integer productId) {
+        if(!productRepo.existsById(productId)){
+            throw new ProductNotFoundException("Product with ID "+productId+" don't exists.");
+        }
         productRepo.deleteById(productId);
     }
 }
