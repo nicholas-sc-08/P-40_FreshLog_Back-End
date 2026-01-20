@@ -1,7 +1,6 @@
 package com.fl.freshlog.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -9,6 +8,8 @@ import com.fl.freshlog.dto.CategoryDTO;
 import com.fl.freshlog.dto.ProductDTO;
 import com.fl.freshlog.entity.Category;
 import com.fl.freshlog.entity.Product;
+import com.fl.freshlog.exception.CategoryNotFoundException;
+import com.fl.freshlog.exception.InvalidStockException;
 import com.fl.freshlog.exception.ProductAlreadyExistsException;
 import com.fl.freshlog.exception.ProductNotFoundException;
 import com.fl.freshlog.repository.CategoryRepo;
@@ -51,19 +52,28 @@ public class ProductService {
     }
 
     public ProductDTO saveProduct(ProductDTO dto) {
-        CategoryDTO category = categoryRepo.findByName(dto.categoryName());
+        CategoryDTO category = categoryRepo.findByName(dto.categoryName()).orElse(null);
+        if(category == null) {
+            throw new CategoryNotFoundException("Category with name "+dto.categoryName()+" don't exists.");
+        }
+
         Category categoryEntity = new Category();
-        
         categoryEntity.setCategoryId(category.categoryId());
         categoryEntity.setName(category.name());
 
-        Optional<Product> productExists = productRepo.findByName(dto.name());
-        if(productExists.isPresent()) {
-            throw new ProductAlreadyExistsException("Product with name "+dto.name()+" already exists");
+        if(dto.minStock() < 1) {
+            throw new InvalidStockException("Stock needs to have at least 1 product.");
+        }
+        
+        Product productData = new Product();
+        if(dto.productId() != null && productRepo.existsById(dto.productId())) {
+            productData.setProductId(dto.productId());
+        } else {
+            if(productRepo.findByName(dto.name()).isPresent()) {
+                throw new ProductAlreadyExistsException("Product with name "+dto.name()+" already exists");
+            }
         }
 
-        Product productData = new Product();
-        
         productData.setName(dto.name());
         productData.setCategory(categoryEntity);
         productData.setPrice(dto.price());

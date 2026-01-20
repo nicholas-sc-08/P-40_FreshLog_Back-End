@@ -1,10 +1,8 @@
 package com.fl.freshlog.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-import org.springframework.ui.ModelMap;
 
 import com.fl.freshlog.dto.CategoryDTO;
 import com.fl.freshlog.entity.Category;
@@ -22,35 +20,29 @@ public class CategoryService {
 
     public List<CategoryDTO> getAllCategories() {
         List<Category> categories = categoryRepo.findAll();
-        
-       return categories.stream().map(category -> new CategoryDTO(category.getCategoryId(), category.getName())).toList();
+        return categories.stream().map(category -> new CategoryDTO(category.getCategoryId(), category.getName())).toList();
     }
 
     public CategoryDTO getCategoryByName(String name) {
-        CategoryDTO existsCategory = categoryRepo.findByName(name);
-
-        if(existsCategory != null) {
-            return existsCategory;
-        }
-        throw new CategoryNotFoundException("Category "+name+" don't exists!");
+        CategoryDTO existsCategory = categoryRepo.findByName(name).orElseThrow(() -> new CategoryNotFoundException("Category "+name+" don't exists!"));
+        return existsCategory;        
     }
 
     public CategoryDTO saveCategory(CategoryDTO dto) {
         
-        CategoryDTO existsCategory = categoryRepo.findByName(dto.name());
-
-        if(existsCategory == null) {
+        categoryRepo.findByName(dto.name()).orElseThrow(() -> new CategoryAlreadyExistsException("Category already exists!"));
             
-            Category entity = new Category();
-            entity.setName(dto.name());
+        Category entity = new Category();
+        entity.setName(dto.name());
             
-            Category savedEntity = categoryRepo.save(entity);
-            return new CategoryDTO(savedEntity.getCategoryId(), savedEntity.getName());
-        }
-        throw new CategoryAlreadyExistsException("Category already exists!");
+        Category savedEntity = categoryRepo.save(entity);
+        return new CategoryDTO(savedEntity.getCategoryId(), savedEntity.getName());
     }
 
     public void deleteCategory(Integer id) {
+        if(!categoryRepo.findById(id).isPresent()) {
+            throw new CategoryNotFoundException("Category with id "+id+" don't exists!");
+        }
         categoryRepo.deleteById(id);
     }
 }
