@@ -51,6 +51,9 @@ public class BatchService {
     }
 
     public void deleteBatch(Integer id) {
+        if(!batchRepo.findById(id).isPresent()) {
+            throw new BatchNotFoundException("Batch with id "+id+" don't exists.");
+        }
         batchRepo.deleteById(id);
     }
 }

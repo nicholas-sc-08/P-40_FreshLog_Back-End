@@ -1,7 +1,6 @@
 package com.fl.freshlog.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -10,6 +9,7 @@ import com.fl.freshlog.dto.ProductDTO;
 import com.fl.freshlog.entity.Category;
 import com.fl.freshlog.entity.Product;
 import com.fl.freshlog.exception.CategoryNotFoundException;
+import com.fl.freshlog.exception.InvalidStockException;
 import com.fl.freshlog.exception.ProductAlreadyExistsException;
 import com.fl.freshlog.exception.ProductNotFoundException;
 import com.fl.freshlog.repository.CategoryRepo;
@@ -60,6 +60,10 @@ public class ProductService {
         Category categoryEntity = new Category();
         categoryEntity.setCategoryId(category.categoryId());
         categoryEntity.setName(category.name());
+
+        if(dto.minStock() < 1) {
+            throw new InvalidStockException("Stock needs to have at least 1 product.");
+        }
         
         Product productData = new Product();
         if(dto.productId() != null && productRepo.existsById(dto.productId())) {
