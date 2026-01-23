@@ -1,0 +1,24 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: freshlog
+      MYSQL_ROOT_PASSWORD: Mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+  api:
+    build: .
+    container_name: freshlog-api
+    restart: always
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/freshlog
+      DB_USERNAME: root
+      DB_PASSWORD: Mysql
+volumes:
+  mysql_data:
