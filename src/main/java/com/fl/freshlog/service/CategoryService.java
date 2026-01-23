@@ -40,7 +40,7 @@ public class CategoryService {
     }
 
     public void deleteCategory(Integer id) {
-        if(!categoryRepo.findById(id).isPresent()) {
+        if(categoryRepo.findById(id).isEmpty()) {
             throw new CategoryNotFoundException("Category with id "+id+" don't exists!");
         }
         categoryRepo.deleteById(id);
