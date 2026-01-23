@@ -1,5 +1,7 @@
 package com.fl.freshlog.entity;
 
+import com.fl.freshlog.dto.CategoryDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,4 +24,9 @@ public class Category {
 
     @Column(name = "name", nullable = false, unique = true)
     private String name;
+
+    public Category(CategoryDTO dto) {
+        this.categoryId = dto.categoryId();
+        this.name = dto.name();
+    }
 }
