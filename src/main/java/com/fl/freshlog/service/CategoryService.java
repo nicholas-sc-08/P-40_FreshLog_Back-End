@@ -8,6 +8,7 @@ import com.fl.freshlog.dto.CategoryDTO;
 import com.fl.freshlog.entity.Category;
 import com.fl.freshlog.exception.CategoryAlreadyExistsException;
 import com.fl.freshlog.exception.CategoryNotFoundException;
+import com.fl.freshlog.mapper.CategoryMapper;
 import com.fl.freshlog.repository.CategoryRepo;
 
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,10 @@ import lombok.RequiredArgsConstructor;
 public class CategoryService {
     
     private final CategoryRepo categoryRepo;
+    private final CategoryMapper categoryMapper;
 
     public List<CategoryDTO> getAllCategories() {
-        List<Category> categories = categoryRepo.findAll();
-        return categories.stream().map(category -> new CategoryDTO(category.getCategoryId(), category.getName())).toList();
+        return categoryRepo.findAll().stream().map(c -> categoryMapper.toDTO(c)).toList();
     }
 
     public CategoryDTO getCategoryByName(String name) {
@@ -30,13 +31,15 @@ public class CategoryService {
 
     public CategoryDTO saveCategory(CategoryDTO dto) {
         
-        categoryRepo.findByName(dto.name()).orElseThrow(() -> new CategoryAlreadyExistsException("Category already exists!"));
-            
+        if(categoryRepo.findByName(dto.name()).isPresent()) {
+           throw new CategoryAlreadyExistsException("Category already exists!");
+        }
+
         Category entity = new Category();
         entity.setName(dto.name());
             
         Category savedEntity = categoryRepo.save(entity);
-        return new CategoryDTO(savedEntity.getCategoryId(), savedEntity.getName());
+        return categoryMapper.toDTO(savedEntity);
     }
 
     public void deleteCategory(Integer id) {
