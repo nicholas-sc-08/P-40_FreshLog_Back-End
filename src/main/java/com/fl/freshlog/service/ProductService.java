@@ -12,6 +12,7 @@ import com.fl.freshlog.exception.CategoryNotFoundException;
 import com.fl.freshlog.exception.InvalidStockException;
 import com.fl.freshlog.exception.ProductAlreadyExistsException;
 import com.fl.freshlog.exception.ProductNotFoundException;
+import com.fl.freshlog.mapper.ProductMapper;
 import com.fl.freshlog.repository.CategoryRepo;
 import com.fl.freshlog.repository.ProductRepo;
 
@@ -22,41 +23,21 @@ import lombok.RequiredArgsConstructor;
 public class ProductService {
     
     private final ProductRepo productRepo;
+    private final ProductMapper productMapper;
     private final CategoryRepo categoryRepo;
 
     public List<ProductDTO> getAllProducts() {
         List<Product> products = productRepo.findAll();
-        return products.stream().map(p -> new ProductDTO(
-            p.getProductId(),
-            p.getName(),
-            p.getCategory().getName(),
-            p.getPrice(),
-            p.getMinStock(),
-            p.getCreatedAt()
-        )).toList();
+        return products.stream().map(p -> productMapper.toDTO(p)).toList();
     }
 
     public ProductDTO getProductByName(String name) {
         Product product = productRepo.findByName(name).orElseThrow(() -> new ProductNotFoundException("Product with name "+name+" don't exist"));
-
-        ProductDTO productData = new ProductDTO(
-            product.getProductId(),
-            product.getName(),
-            product.getCategory().getName(),
-            product.getPrice(),
-            product.getMinStock(),
-            product.getCreatedAt()
-        );
-
-        return productData;
+        return productMapper.toDTO(product);
     }
 
     public ProductDTO saveProduct(ProductDTO dto) {
-        CategoryDTO category = categoryRepo.findByName(dto.categoryName()).orElse(null);
-        if(category == null) {
-            throw new CategoryNotFoundException("Category with name "+dto.categoryName()+" don't exists.");
-        }
-
+        CategoryDTO category = categoryRepo.findByName(dto.categoryName()).orElseThrow(() -> new CategoryNotFoundException("Category with name "+dto.categoryName()+" don't exists."));
         Category categoryEntity = new Category();
         categoryEntity.setCategoryId(category.categoryId());
         categoryEntity.setName(category.name());
@@ -82,14 +63,7 @@ public class ProductService {
 
         Product savedProduct = productRepo.save(productData);
 
-        return new ProductDTO(
-            savedProduct.getProductId(), 
-            savedProduct.getName(), 
-            savedProduct.getCategory().getName(), 
-            savedProduct.getPrice(), 
-            savedProduct.getMinStock(),
-            savedProduct.getCreatedAt()
-        );
+        return productMapper.toDTO(savedProduct);
     }
 
     public void deleteProductById(Integer productId) {

@@ -11,6 +11,7 @@ import com.fl.freshlog.entity.Product;
 import com.fl.freshlog.exception.BatchAlreadyExistsException;
 import com.fl.freshlog.exception.BatchNotFoundException;
 import com.fl.freshlog.exception.ProductNotFoundException;
+import com.fl.freshlog.mapper.BatchMapper;
 import com.fl.freshlog.repository.BatchRepo;
 import com.fl.freshlog.repository.ProductRepo;
 
@@ -22,6 +23,7 @@ public class BatchService {
 
     private final ProductRepo productRepo;
     private final BatchRepo batchRepo;
+    private final BatchMapper batchMapper;
 
     public List<BatchDTO> findAllBatchs() {
         List<Batch> batches = batchRepo.findAll();
@@ -46,12 +48,11 @@ public class BatchService {
         batch.setQuantity(dto.quantity());
 
         Batch newBatch = batchRepo.save(batch);
-        BatchDTO response = new BatchDTO(newBatch.getBatchId(), newBatch.getProduct().getName(), newBatch.getQuantity());
-        return response;
+        return batchMapper.toDTO(newBatch);
     }
 
     public void deleteBatch(Integer id) {
-        if(!batchRepo.findById(id).isPresent()) {
+        if(batchRepo.findById(id).isEmpty()) {
             throw new BatchNotFoundException("Batch with id "+id+" don't exists.");
         }
         batchRepo.deleteById(id);
