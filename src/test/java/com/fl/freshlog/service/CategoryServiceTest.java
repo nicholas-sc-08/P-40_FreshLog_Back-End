@@ -1,7 +1,5 @@
 package com.fl.freshlog.service;
 
-import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +27,11 @@ class CategoryServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    @Test
+    @DisplayName("Should return all the categories from DB")
+    void getAllCategories() {
+        categoryRepo.findAll();
+    }
 
     @Test
     @DisplayName("Should create Category sucessfully when everything is OK")
